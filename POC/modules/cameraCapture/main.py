@@ -32,13 +32,18 @@ def sendFrameForProcessing(imagePath, imageProcessingEndpoint):
     with open(imagePath, mode="rb") as test_image:
         try:
             response = requests.post(imageProcessingEndpoint, headers = headers, data = test_image)
-            print("Response from classification service: (" + str(response.status_code) + ") " + json.dumps(response.json()) + "\n")
+            print("Response from classification service for image " + imagePath + ": (" + str(response.status_code) + ") " + json.dumps(response.json()) + "\n")
         except Exception as e:
             print(e)
             print("No response from classification service")
             return None
 
     return json.dumps(response.json())
+
+def get_jpg_files(folder_name):
+    folder_path = os.path.join(os.path.dirname(__file__), folder_name)
+    jpg_files = [file for file in os.listdir(folder_path) if file.lower().endswith(".jpg")]
+    return jpg_files
 
 def main(imagePath, imageProcessingEndpoint):
     try:
@@ -54,10 +59,12 @@ def main(imagePath, imageProcessingEndpoint):
         print ( "The sample is now sending images for processing and will indefinitely.")
 
         while True:
-            classification = sendFrameForProcessing(imagePath, imageProcessingEndpoint)
-            if classification:
-                send_to_hub(classification)
-            time.sleep(10)
+            jpg_files = get_jpg_files(imagePath)
+            for image in jpg_files:
+                classification = sendFrameForProcessing(image, imageProcessingEndpoint)
+                if classification:
+                    send_to_hub(classification)
+                time.sleep(10)
 
     except KeyboardInterrupt:
         print ( "IoT Edge module sample stopped" )

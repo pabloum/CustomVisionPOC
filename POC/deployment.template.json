@@ -74,7 +74,7 @@
             "restartPolicy": "always",
             "settings": {
               "image": "${MODULES.cameraCapture}",
-              "createOptions": "{\"Env\":[\"IMAGE_PATH=test_image.jpg\",\"IMAGE_PROCESSING_ENDPOINT=http://samplemodule/image\"]}"
+              "createOptions": "{\"Env\":[\"IMAGE_PATH=ImagesToClassify/\",\"IMAGE_PROCESSING_ENDPOINT=http://samplemodule/image\"]}"
             }
           }
         }
